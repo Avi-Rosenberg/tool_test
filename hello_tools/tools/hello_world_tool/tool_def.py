@@ -8,15 +8,22 @@ from . import main
 hello_tool = Tool(
     name="say_hello",
     type="docker",
-    image="dmichaelb/test:amd",
+    image="trialc5eche.jfrog.io/test-docker/python:3.12",
     description="Prints hello {name}!",
     args=[Arg(name="name", description="name to say hello to", required=True)],
     image_provider=ImageProvider(
-        kind="dockerhub",
+        kind="jfrog",
         auth=[
-            Auth(name="username", value="dmichaelb"), 
-            Auth(name="password", value_from={"secret": "MICHAEL_DH_PASSWORD"})
-        ],
+            Auth(
+                name="username",
+                value="avi.rosenberg@kubiya.ai",
+            ),
+            Auth(
+                name="password",
+                value_from={
+                    "secret": "JF_SECRET_PASS"
+                }
+            )]
     ),
     on_build="""
 curl -LsSf https://astral.sh/uv/0.4.27/install.sh | sh > /dev/null 2>&1
@@ -38,7 +45,7 @@ python /tmp/main.py $name
             content=inspect.getsource(main),
         ),
     ],
-    secrets=["MICHAEL_DH_PASSWORD"],
+    secrets=["JF_SECRET_PASS"],
 )
 
 tool_registry.register("hello_world_tool", hello_tool)
